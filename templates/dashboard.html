@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="header">
+    <h1>Invoice Dashboard</h1>
+</div>
+
+<div class="card">
+    <h2 class="card-title">Create New Invoice</h2>
+    <form action="/create" method="POST">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+                <label for="client_name">Client Name</label>
+                <input type="text" id="client_name" name="client_name" required placeholder="e.g. Acme Corp">
+            </div>
+            <div class="form-group">
+                <label for="client_email">Client Email</label>
+                <input type="email" id="client_email" name="client_email" required placeholder="name@example.com">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Service Description</label>
+            <textarea id="description" name="description" rows="2" required placeholder="e.g. Web Development Services - Feb 2026"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="amount">Total Amount ($)</label>
+            <input type="number" id="amount" name="amount" step="0.01" min="0" required placeholder="0.00">
+        </div>
+
+        <button type="submit" class="btn-primary">Generate & Send Invoice</button>
+    </form>
+</div>
+
+<div class="card">
+    <h2 class="card-title">History Log</h2>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Client</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for invoice in invoices %}
+                <tr>
+                    <td>{{ invoice.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>
+                        <div>{{ invoice.client_name }}</div>
+                        <div style="font-size: 0.75rem; color: #6b7280;">{{ invoice.client_email }}</div>
+                    </td>
+                    <td style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        {{ invoice.description }}
+                    </td>
+                    <td style="font-family: monospace; font-size: 0.95rem;">
+                        ${{ "%.2f"|format(invoice.amount) }}
+                    </td>
+                    <td>
+                        <span class="status-badge {{ 'status-sent' if invoice.status == 'Sent' else 'status-error' if invoice.status == 'Error' else 'status-draft' }}">{{ invoice.status }}</span>
+                    </td>
+                    <td>
+                        <a href="/download/{{ invoice.id }}" class="btn-sm btn-outline" target="_blank">
+                            Download PDF
+                        </a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 2rem; color: #6b7280;">
+                        No invoices generated yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

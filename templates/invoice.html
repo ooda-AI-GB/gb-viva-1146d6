@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            color: #333;
+        }
+        .header {
+            width: 100%;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 24pt;
+            color: #2563eb;
+            margin: 0;
+            text-transform: uppercase;
+        }
+        .meta {
+            margin-top: 10px;
+            color: #666;
+        }
+        .invoice-details {
+            width: 100%;
+            margin-bottom: 40px;
+        }
+        .invoice-details td {
+            vertical-align: top;
+            width: 50%;
+        }
+        .bill-to h3 {
+            margin-top: 0;
+            font-size: 14pt;
+            color: #555;
+        }
+        .table-items {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        .table-items th {
+            text-align: left;
+            border-bottom: 2px solid #ddd;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+        .table-items td {
+            border-bottom: 1px solid #eee;
+            padding: 10px;
+        }
+        .total-section {
+            width: 100%;
+            text-align: right;
+        }
+        .total-label {
+            font-weight: bold;
+            font-size: 14pt;
+            margin-right: 20px;
+        }
+        .total-amount {
+            font-weight: bold;
+            font-size: 18pt;
+            color: #2563eb;
+        }
+        .footer {
+            margin-top: 60px;
+            text-align: center;
+            font-size: 10pt;
+            color: #999;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Invoice</h1>
+        <div class="meta">
+            Invoice #: INV-{{ invoice.id }}<br>
+            Date: {{ invoice.created_at.strftime('%Y-%m-%d') }}
+        </div>
+    </div>
+
+    <table class="invoice-details">
+        <tr>
+            <td>
+                <div class="bill-to">
+                    <h3>Bill To:</h3>
+                    <strong>{{ invoice.client_name }}</strong><br>
+                    {{ invoice.client_email }}
+                </div>
+            </td>
+            <td style="text-align: right;">
+                <div class="from">
+                    <h3>From:</h3>
+                    <strong>My Company Inc.</strong><br>
+                    billing@mycompany.com
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <table class="table-items">
+        <thead>
+            <tr>
+                <th style="width: 70%;">Description</th>
+                <th style="width: 30%; text-align: right;">Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ invoice.description }}</td>
+                <td style="text-align: right;">${{ "%.2f"|format(invoice.amount) }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="total-section">
+        <span class="total-label">Total Due:</span>
+        <span class="total-amount">${{ "%.2f"|format(invoice.amount) }}</span>
+    </div>
+
+    <div class="footer">
+        <p>Thank you for your business!</p>
+    </div>
+</body>
+</html>
